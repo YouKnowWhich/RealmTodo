@@ -17,21 +17,21 @@ class TodoModel: ObservableObject {
         return try! Realm(configuration: config)
     }
     
-    // 保存されるTodoItemをResults<TodoItem>として返す
-    var items: Results<TodoItem> {
+    // 保存されるTodoItemをResultsとして返す
+    var items: Results {
         realm.objects(TodoItem.self)
     }
     
-    // TitleとDetailを受け取り、新規TodoItemを作成・登録する
-    func addTodoItem(_ title: String, detail: String) {
-        let item = TodoItem()
-        item.id = UUID()
-        item.title = title
-        item.detail = detail
-        try! realm.write {
-            realm.add(item)
-        }
+    // IDから要素を取得するメソッド
+    func itemFromID(_ id: TodoItem.ID) -> TodoItem? {
+        items.first(where: {$0.id == id})
     }
+    
+    // TODOModelに渡されたCommandを実行するメソッド
+    func executeCommand(_ command: TodoModelCommand) {
+        command.execute(self)
+    }
+    
 }
 
 class TodoItem: Object, Identifiable {

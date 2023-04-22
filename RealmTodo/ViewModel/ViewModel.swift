@@ -8,16 +8,24 @@ import RealmSwift
 class ViewModel: ObservableObject {
     @Published var model: TodoModel = TodoModel()
     
-    // Modelから受け取るResuls<TodoItem>をViewへ渡す
-    var todoItems: Results<TodoItem> {
+    // Modelから受け取るResulsをViewへ渡す
+    var todoItems: Results {
         model.items
     }
     
     // Viewからのリクエストで、Title, Detailに指定された値でTodoItem作成をModelに依頼する
     func addTodoItem(_ title: String, detail: String = "") {
-        // 変更することを明示する
-        self.objectWillChange.send()
-        // Model へ作成を依頼する
-        model.addTodoItem(title, detail: detail)
+        let command = TodoModel.CreateTodoItemCommand(title, detail: detail)
+        objectWillChange.send()
+        model.executeCommand(command)
+    }
+    
+    func removeTodoItem(_ id: TodoItem.ID) {
+        // (1) RemoveTodoItemCommandを用意
+        let command = TodoModel.RemoveTodoItemCommand(id)
+        // (2) Modelが変更されることを通知
+        objectWillChange.send()
+        // (3) Commandを実行
+        model.executeCommand(command)
     }
 }
