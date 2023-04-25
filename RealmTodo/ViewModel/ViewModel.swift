@@ -8,7 +8,7 @@ import RealmSwift
 class ViewModel: ObservableObject {
     @Published var model: TodoModel = TodoModel()
     
-    var todoItems: Results {
+    var todoItems: Results<TodoItem> {
         model.items
     }
     
@@ -31,7 +31,10 @@ class ViewModel: ObservableObject {
     var redoable: Bool {
         return model.redoable
     }
-    
+}
+
+// MARK: TodoItem edit
+extension ViewModel {
     func addTodoItem(_ title: String, detail: String = "") {
         let command = TodoModel.CreateTodoItemCommand(title, detail: detail)
         objectWillChange.send()
@@ -40,6 +43,18 @@ class ViewModel: ObservableObject {
     
     func removeTodoItem(_ id: TodoItem.ID) {
         let command = TodoModel.RemoveTodoItemCommand(id)
+        objectWillChange.send()
+        model.executeCommand(command)
+    }
+    
+    func updateTodoItemTitle(_ id: TodoItem.ID, newTitle: String) {
+        let command = TodoModel.UpdateTodoItemProperty(id, keyPath: \TodoItem.title, newValue: newTitle)
+        objectWillChange.send()
+        model.executeCommand(command)
+    }
+    
+    func updateTodoItemDetail(_ id:TodoItem.ID,newDetail: String) {
+        let command = TodoModel.UpdateTodoItemProperty(id, keyPath: \TodoItem.detail, newValue: newDetail)
         objectWillChange.send()
         model.executeCommand(command)
     }

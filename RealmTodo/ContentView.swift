@@ -15,19 +15,18 @@ struct ContentView: View {
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
     
-    // (1) ViewModel は、EnvironmentObject として渡す
     @EnvironmentObject var viewModel: ViewModel
+    let coordinator = Coordinator()
     
     var body: some View {
         NavigationView {
             List {
                 ForEach(viewModel.todoItems.freeze()) { item in
-                    Text("\(item.title)")
+                    NavigationLink(destination: { coordinator.nextView(item) }, label: { Text(item.title) })
                 }
                 // onDelete内で削除処理
                 .onDelete { indexSet in
                     if let index = indexSet.first {
-                        // ViewModelには、removeTodoItemメソッドを作成予定
                         viewModel.removeTodoItem(viewModel.todoItems[index].id)
                     }
                 }

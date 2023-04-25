@@ -18,7 +18,7 @@ class TodoModel: ObservableObject {
         return try! Realm(configuration: config)
     }
 
-    var items: Results {
+    var items: Results<TodoItem> {
         realm.objects(TodoItem.self)
     }
     
@@ -57,4 +57,14 @@ class TodoItem: Object, Identifiable {
     @Persisted(primaryKey: true) var id: UUID = UUID()
     @Persisted var title: String
     @Persisted var detail: String
+}
+
+extension TodoItem {
+    static func previewItem() -> TodoItem {
+        let item = TodoItem()
+        item.id = UUID()
+        item.title = "Title"
+        item.detail = "Detail"
+        return item
+    }
 }

@@ -14,6 +14,8 @@
 		4FD70C9029E980AD005AAB9F /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD70C8F29E980AD005AAB9F /* Model.swift */; };
 		4FD70C9229EAC843005AAB9F /* ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD70C9129EAC843005AAB9F /* ViewModel.swift */; };
 		4FD70C9429F12A6F005AAB9F /* Model+Command.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD70C9329F12A6F005AAB9F /* Model+Command.swift */; };
+		4FD70C9A29F7C878005AAB9F /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD70C9929F7C878005AAB9F /* DetailView.swift */; };
+		4FD70C9C29F7D1A0005AAB9F /* Coordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD70C9B29F7D1A0005AAB9F /* Coordinator.swift */; };
 		E7D515A2B24970F4209E0F23 /* Pods_RealmTodo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA49B80C71B2E9D2AB93AE40 /* Pods_RealmTodo.framework */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +29,8 @@
 		4FD70C8F29E980AD005AAB9F /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		4FD70C9129EAC843005AAB9F /* ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewModel.swift; sourceTree = "<group>"; };
 		4FD70C9329F12A6F005AAB9F /* Model+Command.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Model+Command.swift"; sourceTree = "<group>"; };
+		4FD70C9929F7C878005AAB9F /* DetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailView.swift; sourceTree = "<group>"; };
+		4FD70C9B29F7D1A0005AAB9F /* Coordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Coordinator.swift; sourceTree = "<group>"; };
 		B1F8AEC163DCF58814136334 /* Pods-RealmTodo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RealmTodo.release.xcconfig"; path = "Target Support Files/Pods-RealmTodo/Pods-RealmTodo.release.xcconfig"; sourceTree = "<group>"; };
 		EA49B80C71B2E9D2AB93AE40 /* Pods_RealmTodo.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RealmTodo.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -103,6 +107,8 @@
 			isa = PBXGroup;
 			children = (
 				4FB16FE829E7C9150023F4B4 /* ContentView.swift */,
+				4FD70C9929F7C878005AAB9F /* DetailView.swift */,
+				4FD70C9B29F7D1A0005AAB9F /* Coordinator.swift */,
 			);
 			name = View;
 			sourceTree = "<group>";
@@ -239,10 +245,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4FD70C9029E980AD005AAB9F /* Model.swift in Sources */,
+				4FD70C9A29F7C878005AAB9F /* DetailView.swift in Sources */,
 				4FB16FE929E7C9150023F4B4 /* ContentView.swift in Sources */,
 				4FD70C9229EAC843005AAB9F /* ViewModel.swift in Sources */,
 				4FB16FE729E7C9150023F4B4 /* RealmTodoApp.swift in Sources */,
 				4FD70C9429F12A6F005AAB9F /* Model+Command.swift in Sources */,
+				4FD70C9C29F7D1A0005AAB9F /* Coordinator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -52,13 +52,14 @@ extension TodoModel {
         
         func execute(_ model: TodoModel) {
             // save item info
-            guard let itemToBeRemoved = model.itemFromID(self.id) else { return } // no item
+            guard let itemToBeRemoved = model.itemFromID(self.id) else { return }
             self.title = itemToBeRemoved.title
             self.detail = itemToBeRemoved.detail
             try! model.realm.write {
                 model.realm.delete(itemToBeRemoved)
             }
         }
+        
         func undo(_ model: TodoModel) {
             guard let title = self.title,
                   let detail = self.detail else { return }
@@ -70,6 +71,95 @@ extension TodoModel {
                 model.realm.add(item)
                 self.title = nil
                 self.detail = nil
+            }
+        }
+    }
+    // GenericsとKeyPathを使用し、TODOItemのtitleを更新するコマンド
+    class UpdateTodoItemProperty<T>: TodoModelCommand {
+        let id: TodoItem.ID
+        let keyPath: ReferenceWritableKeyPath<TodoItem, T>
+        let newValue: T
+        var oldValue: T?
+        
+        init(id: TodoItem.ID, keyPath: ReferenceWritableKeyPath<TodoItem, T>, newValue: T) {
+            self.id = id
+            self.keyPath = keyPath
+            self.newValue = newValue
+            self.oldValue = nil
+        }
+        
+        func execute(_ model: TodoModel) {
+            guard let item = model.itemFromID(id) else { return }
+            try! model.realm.write {
+                self.oldValue = item[keyPath: keyPath]
+                item[keyPath: keyPath] = newValue
+            }
+        }
+        
+        func undo(_ model: TodoModel) {
+            guard let item = model.itemFromID(id) else { return }
+            guard let oldValue = oldValue else { return }
+            try!model.realm.write {
+                item[keyPath: keyPath] = oldValue
+            }
+        }
+    }
+    
+    // KeyPathとGenericsを使用した、プロパティを更新するための汎用的なコマンド
+    class UpdateTodoItemString: TodoModelCommand {
+        let id: TodoItem.ID
+        let keyPath: ReferenceWritableKeyPath<TodoItem, String>
+        let newValue: String
+        var oldValue: String?
+        
+        init(id: TodoItem.ID, keyPath: ReferenceWritableKeyPath<TodoItem, String>, newValue: String) {
+            self.id = id
+            self.keyPath = keyPath
+            self.newValue = newValue
+            self.oldValue = nil
+        }
+        
+        func execute(_ model: TodoModel) {
+            guard let item = model.itemFromID(id) else { return }
+            try! model.realm.write {
+                self.oldValue = item[keyPath: keyPath]
+                item[keyPath: keyPath] = newValue
+            }
+        }
+        
+        func undo(_ model: TodoModel) {
+            guard let item = model.itemFromID(id) else { return }
+            guard let oldValue = oldValue else { return }
+            try! model.realm.write {
+                item[keyPath: keyPath] = oldValue
+            }
+        }
+    }
+    
+    class UpdateTodoItemTitle: TodoModelCommand {
+        let id: TodoItem.ID
+        let newTitle: String
+        var oldTitle: String?
+        
+        init(_ id: TodoItem.ID, newTitle: String) {
+            self.id = id
+            self.newTitle = newTitle
+            self.oldTitle = nil
+        }
+        
+        func execute(_ model: TodoModel) {
+            guard let item = model.itemFromID(id) else { return }
+            try! model.realm.write {
+                self.oldTitle = item.title
+                item.title = newTitle
+            }
+        }
+        
+        func undo(_ model: TodoModel) {
+            guard let item = model.itemFromID(id) else { return }
+            guard let oldTitle = oldTitle else { return }
+            try! model.realm.write {
+                item.title = oldTitle
             }
         }
     }
