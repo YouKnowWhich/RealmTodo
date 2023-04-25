@@ -6,8 +6,9 @@ import Foundation
 import RealmSwift
 
 class TodoModel: ObservableObject {
-    // Realmファイルの保存場所などの、Realmに対する設定をカスタマイズするオブジェクト
     var config: Realm.Configuration
+    var undoStack: [TodoModelCommand] = []
+    var redoStack: [TodoModelCommand] = []
     
     init() {
         config = Realm.Configuration()
@@ -16,22 +17,40 @@ class TodoModel: ObservableObject {
     var realm: Realm {
         return try! Realm(configuration: config)
     }
-    
-    // 保存されるTodoItemをResultsとして返す
+
     var items: Results {
         realm.objects(TodoItem.self)
     }
     
-    // IDから要素を取得するメソッド
     func itemFromID(_ id: TodoItem.ID) -> TodoItem? {
         items.first(where: {$0.id == id})
     }
     
-    // TODOModelに渡されたCommandを実行するメソッド
     func executeCommand(_ command: TodoModelCommand) {
+        redoStack = []
         command.execute(self)
+        undoStack.append(command)
     }
     
+    var undoable: Bool {
+        return !undoStack.isEmpty
+    }
+    
+    var redoable: Bool {
+        return !redoStack.isEmpty
+    }
+    
+    func undo() {
+        guard let undoCommand = undoStack.popLast() else { return }
+        undoCommand.undo(self)
+        redoStack.append(undoCommand)
+    }
+    
+    func redo() {
+        guard let redoCommand = redoStack.popLast() else { return }
+        redoCommand.execute(self)
+        undoStack.append(redoCommand)
+    }
 }
 
 class TodoItem: Object, Identifiable {

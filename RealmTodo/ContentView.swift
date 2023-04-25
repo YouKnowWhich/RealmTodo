@@ -25,7 +25,7 @@ struct ContentView: View {
                     Text("\(item.title)")
                 }
                 // onDelete内で削除処理
-                .onDelete{ indexSet in
+                .onDelete { indexSet in
                     if let index = indexSet.first {
                         // ViewModelには、removeTodoItemメソッドを作成予定
                         viewModel.removeTodoItem(viewModel.todoItems[index].id)
@@ -43,21 +43,37 @@ struct ContentView: View {
                     }
                 }
                 
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
                     Button(action: {
                         let dateFormatter = DateFormatter()
                         dateFormatter.dateFormat = "YYYY/MM/dd(E) \nHH:mm:ss"
                         dateFormatter.locale = Locale(identifier: "ja_JP")
                         let itemName = dateFormatter.string(from: Date())
-                        
                         viewModel.addTodoItem(itemName)
-                    }){
+                    }, label: {
                         Image(systemName: "plus")
-                    }
+                    })
+                }
+                
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Button(action: {
+                        viewModel.undo()
+                    }, label: {
+                        Text("UNDO")
+                    })
+                    .disabled(!viewModel.undoable)
+                    
+                    Button(action: {
+                        viewModel.redo()
+                    }, label: {
+                        Text("REDO")
+                    })
+                    .disabled(!viewModel.redoable)
+                    Spacer()
                 }
                 // キーボードに閉じるボタンを配置
                 ToolbarItem(placement: .keyboard){
-                              Text("閉じる")
+                    Text("閉じる")
                 }
             }
         }
