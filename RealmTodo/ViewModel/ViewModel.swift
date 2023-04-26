@@ -58,4 +58,17 @@ extension ViewModel {
         objectWillChange.send()
         model.executeCommand(command)
     }
+    
+    // ViewModelからModelへの修正時に、MultipleCommandを使用するように変更
+    func updateTodoItemTitleAndDetail(_ id: TodoItem.ID, newTitle: String?, newDetail: String?) {
+        let command = TodoModel.MultipleCommand()
+        if let newTitle = newTitle {
+            command.add(TodoModel.UpdateTodoItemProperty(id, keyPath: \TodoItem.title, newValue: newTitle))
+        }
+        if let newDetail = newDetail {
+            command.add(TodoModel.UpdateTodoItemProperty(id, keyPath: \TodoItem.detail, newValue: newDetail))
+        }
+        objectWillChange.send()
+        model.executeCommand(command)
+    }
 }

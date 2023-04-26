@@ -40,14 +40,11 @@ struct DetailView: View {
                 Spacer()
                 // 入力された値を使ってViewModelに変更依頼
                 Button(action: {
-                    if title != item.title {
-                        viewModel.updateTodoItemTitle(item.id, newTitle: title)
-                    }
-                    if detail != item.detail {
-                        viewModel.updateTodoItemDetail(item.id, newDetail: detail)
-                    }
-                    dismiss()
-                }, label: {
+                    viewModel.updateTodoItemTitleAndDetail(item.id,
+                                                           newTitle: title == item.title ? nil: title,
+                                                           newDetail: detail == item.detail ? nil: detail)
+                       dismiss()
+                       }, label: {
                     Text("update").font(.title)
                 })
                 .buttonStyle(.borderless)

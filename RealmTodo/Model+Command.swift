@@ -9,13 +9,37 @@ protocol TodoModelCommand: AnyObject {
     func undo(_ model: TodoModel)
 }
 
+// TODOModelCommandに準拠しつつ、内部に複数のTODOModelCommandを持ち、順番に実行するコマンド
+extension TodoModel {
+    class MultipleCommand: TodoModelCommand {
+        var commands: [TodoModelCommand] = []
+        func add(_ command: TodoModelCommand) {
+            commands.append(command)
+        }
+        
+        // executeの際には保持している順番に実行
+        func execute(_ model: TodoModel) {
+            for command in commands {
+                command.execute(model)
+            }
+        }
+        
+        // UNDOの際には、逆順に実行
+        func undo(_ model: TodoModel) {
+            for command in commands.reversed() {
+                command.undo(model)
+            }
+        }
+    }
+}
+
 extension TodoModel {
     class CreateTodoItemCommand: TodoModelCommand {
         var id: TodoItem.ID? = nil
         var title: String = ""
         var detail: String = ""
         
-        init(title: String, detail: String = "") {
+        init(_ title: String, detail: String = "") {
             self.title = title
             self.detail = detail
         }
@@ -46,7 +70,7 @@ extension TodoModel {
         var title: String? = nil
         var detail: String? = nil
         
-        init(id: TodoItem.ID) {
+        init(_ id: TodoItem.ID) {
             self.id = id
         }
         
@@ -81,7 +105,7 @@ extension TodoModel {
         let newValue: T
         var oldValue: T?
         
-        init(id: TodoItem.ID, keyPath: ReferenceWritableKeyPath<TodoItem, T>, newValue: T) {
+        init(_ id: TodoItem.ID, keyPath: ReferenceWritableKeyPath<TodoItem, T>, newValue: T) {
             self.id = id
             self.keyPath = keyPath
             self.newValue = newValue

@@ -22,7 +22,12 @@ struct ContentView: View {
         NavigationView {
             List {
                 ForEach(viewModel.todoItems.freeze()) { item in
-                    NavigationLink(destination: { coordinator.nextView(item) }, label: { Text(item.title) })
+                    NavigationLink(destination: { coordinator.nextView(item) }, label: {
+                        VStack(alignment: .leading) {
+                            Text("Title: \(item.title)")
+                            Text("Detail: \(item.detail == "" ? "-" : item.detail)").font(.caption)
+                        }
+                    }).frame(maxWidth: .infinity)
                 }
                 // onDelete内で削除処理
                 .onDelete { indexSet in
