@@ -1,5 +1,5 @@
-// 既存要素をコレクションとしてModel から受け取りViewに提供する
-//　View からのリクエストで新しい要素を作成するよう Model に依頼する
+// 既存要素をコレクションとしてModelから受け取りViewに提供する
+//　Viewからのリクエストで新しい要素を作成するようModelに依頼する
 
 import Foundation
 import SwiftUI
@@ -8,6 +8,7 @@ import RealmSwift
 class ViewModel: ObservableObject {
     @Published var model: TodoModel = TodoModel()
     
+    // Modelから受け取るResults<TodoItem>を(Viewへ)渡す
     var todoItems: Results<TodoItem> {
         model.items
     }
@@ -35,15 +36,22 @@ class ViewModel: ObservableObject {
 
 // MARK: TodoItem edit
 extension ViewModel {
+    
+    // Viewからのリクエストで、Title, Detailに指定値を持つようにTodoItem作成を依頼
     func addTodoItem(_ title: String, detail: String = "") {
         let command = TodoModel.CreateTodoItemCommand(title, detail: detail)
+        // 変更することを明示する
         objectWillChange.send()
+        // Modelへ作成を依頼
         model.executeCommand(command)
     }
     
     func removeTodoItem(_ id: TodoItem.ID) {
+        // RemoveTodoItemCommandを用意
         let command = TodoModel.RemoveTodoItemCommand(id)
+        // Model が変更されることを通知
         objectWillChange.send()
+        // Commandを実行
         model.executeCommand(command)
     }
     

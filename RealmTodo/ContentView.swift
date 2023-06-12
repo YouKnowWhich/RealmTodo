@@ -1,5 +1,5 @@
-// Viewのファイル Realmのデータを表示する
-// Realmに保存されているTODOItemの数と そのタイトルのリスト表示を行うビューを作る
+// ViewのファイルRealmのデータを表示する
+// Realmに保存されているTODOItemの数と、そのタイトルのリスト表示を行うビューを作る
 
 import SwiftUI
 
@@ -8,42 +8,45 @@ struct ContentView: View {
     init() {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
-        appearance.backgroundColor = UIColor(red: 0.58, green: 0.69, blue: 0.75, alpha: 1.00)
+        appearance.backgroundColor = UIColor(red: 0.91, green: 0.25, blue: 0.09, alpha: 1.00)
         appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
         appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
     
+    // ViewModelは、EnvironmentObjectとして渡す
     @EnvironmentObject var viewModel: ViewModel
     let coordinator = Coordinator()
     
     var body: some View {
         NavigationView {
             List {
+                // ViewModelがtodoItemsとしてResultsResults<TODOItem>を返すので、freezeして使う
                 ForEach(viewModel.todoItems.freeze()) { item in
                     NavigationLink(destination: { coordinator.nextView(item) }, label: {
                         VStack(alignment: .leading) {
-                            Text("Title: \(item.title)")
-                            Text("Detail: \(item.detail == "" ? "-" : item.detail)").font(.caption)
+                            Text("\(item.title)")
+                            Text("\(item.detail == "" ? "-" : item.detail)").font(.caption)
                         }
                     }).frame(maxWidth: .infinity)
                 }
-                // onDelete内で削除処理
+                // 削除処理
                 .onDelete { indexSet in
                     if let index = indexSet.first {
                         viewModel.removeTodoItem(viewModel.todoItems[index].id)
                     }
                 }
             }
-            .navigationTitle("Todoリスト")
+            .navigationTitle("TodoList")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     HStack {
-                        // Editボタンを表示
-                        EditButton()
-                        Text("残り: \(viewModel.todoItems.count)")
+                        MyEditButton()  // MyEditButton
+                        Text("#: \(viewModel.todoItems.count)")
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
                     }
                 }
                 
@@ -63,22 +66,42 @@ struct ContentView: View {
                     Button(action: {
                         viewModel.undo()
                     }, label: {
-                        Text("UNDO")
+                        Image(systemName: "arrowshape.turn.up.left.circle")
                     })
                     .disabled(!viewModel.undoable)
                     
                     Button(action: {
                         viewModel.redo()
                     }, label: {
-                        Text("REDO")
+                        Image(systemName: "arrowshape.turn.up.right.circle")
                     })
                     .disabled(!viewModel.redoable)
+                    
                     Spacer()
                 }
-                // キーボードに閉じるボタンを配置
-                ToolbarItem(placement: .keyboard){
-                    Text("閉じる")
+            }
+        }
+    }
+}
+
+// MyEditButton
+struct MyEditButton: View{
+    @Environment(\.editMode) var editMode
+    
+    var body: some View {
+        Button(action: {
+            withAnimation() {
+                if editMode?.wrappedValue.isEditing == true {
+                    editMode?.wrappedValue = .inactive
+                } else {
+                    editMode?.wrappedValue = .active
                 }
+            }
+        }) {
+            if editMode?.wrappedValue.isEditing == true {
+                Image(systemName: "checkmark.circle")
+            } else {
+                Image(systemName: "minus.circle")
             }
         }
     }

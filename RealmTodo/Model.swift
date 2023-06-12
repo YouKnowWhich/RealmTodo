@@ -1,10 +1,11 @@
 // Realm を管理する。
-// TodoModel ... TodoItemを管理 既存要素をコレクションとして提供する 新しい要素を Realm に追加する
-// TodoItem  ... Title, Detail を受け取り新しいTODOItem(データモデル)を生成する
+// TodoModel ... TodoItemを管理 既存要素をコレクションとして提供する 新しい要素をRealmに追加する
+// TodoItem  ... Title, Detailを受け取り新しいTODOItem(データモデル)を生成する
 
 import Foundation
 import RealmSwift
 
+// TodoItemを管理するクラスTODOModelを定義 このModelを経由して、Realmにアクセスする
 class TodoModel: ObservableObject {
     var config: Realm.Configuration
     var undoStack: [TodoModelCommand] = []
@@ -18,10 +19,12 @@ class TodoModel: ObservableObject {
         return try! Realm(configuration: config)
     }
 
+    // 保存されているTodoItemすべて Results<TodoItem>として渡すメソッド(items)を用意
     var items: Results<TodoItem> {
         realm.objects(TodoItem.self)
     }
     
+    // TodoModelに、IDから要素を取得するメソッドを追加
     func itemFromID(_ id: TodoItem.ID) -> TodoItem? {
         items.first(where: {$0.id == id})
     }
@@ -53,6 +56,7 @@ class TodoModel: ObservableObject {
     }
 }
 
+// タイトルと詳細をStringで持ち、UUID型のidを持つ要素TodoItemとして定義
 class TodoItem: Object, Identifiable {
     @Persisted(primaryKey: true) var id: UUID = UUID()
     @Persisted var title: String

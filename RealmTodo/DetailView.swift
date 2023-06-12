@@ -6,6 +6,9 @@ struct DetailView: View {
     @EnvironmentObject var viewModel: ViewModel
     @Environment(\.dismiss) var dismiss
     
+    // TextFieldなどの要素のフォーカス制御を可能にする
+    @FocusState var isActive: Bool
+    
     // 一時的に入力値を保存するために @State 定義の変数を用意
     let item: TodoItem
     @State private var title = ""
@@ -19,7 +22,20 @@ struct DetailView: View {
                     .onAppear {
                         self.title = item.title
                     }
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .focused($isActive) // TextFieldのフォーカスをBool値で取得、操作
+                    .toolbar {
+                        ToolbarItemGroup(placement: .keyboard) {
+                            Spacer()
+                            Button {
+                                isActive = false
+                            } label: {
+                                Text(Image(systemName: "keyboard.chevron.compact.down"))
+                                    .font(.system(size: 15))
+                            }
+                            
+                        }
+                    }
             }
             HStack {
                 Text("Detail :").font(.caption).frame(width: 40)
@@ -27,7 +43,8 @@ struct DetailView: View {
                     .onAppear {
                         self.detail = item.detail
                     }
-                    .textFieldStyle(.roundedBorder)
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .focused($isActive) // TextFieldのフォーカスをBool値で取得、操作
             }
             HStack {
                 Spacer()
@@ -43,8 +60,8 @@ struct DetailView: View {
                     viewModel.updateTodoItemTitleAndDetail(item.id,
                                                            newTitle: title == item.title ? nil: title,
                                                            newDetail: detail == item.detail ? nil: detail)
-                       dismiss()
-                       }, label: {
+                    dismiss()
+                }, label: {
                     Text("update").font(.title)
                 })
                 .buttonStyle(.borderless)

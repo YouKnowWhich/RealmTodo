@@ -1,4 +1,3 @@
-// CreateTODOItemCommandは、initializerでTitleと Detailを受け取り、executeメソッドで、受け取ったrealmに 指定値を持つようなTODOItemを作成する
 // TodoModelで実行できるCommandは、protocol（TodoModelCommand）へ準拠させる
 
 import Foundation
@@ -9,7 +8,7 @@ protocol TodoModelCommand: AnyObject {
     func undo(_ model: TodoModel)
 }
 
-// TODOModelCommandに準拠しつつ、内部に複数のTODOModelCommandを持ち、順番に実行するコマンド
+// TodoModelCommandに準拠しつつ、内部に複数のTodoModelCommandを持ち、順番に実行するコマンド
 extension TodoModel {
     class MultipleCommand: TodoModelCommand {
         var commands: [TodoModelCommand] = []
@@ -34,6 +33,7 @@ extension TodoModel {
 }
 
 extension TodoModel {
+    // initializerでTitleと Detailを受け取り、executeメソッドで受け取ったrealmに指定値を持つようなTodoItemを作成する
     class CreateTodoItemCommand: TodoModelCommand {
         var id: TodoItem.ID? = nil
         var title: String = ""
@@ -64,7 +64,7 @@ extension TodoModel {
         }
     }
     
-    
+    // 指定したIDを持つTodoItemを削除するコマンド
     class RemoveTodoItemCommand: TodoModelCommand {
         var id: UUID
         var title: String? = nil
@@ -98,7 +98,7 @@ extension TodoModel {
             }
         }
     }
-    // GenericsとKeyPathを使用し、TODOItemのtitleを更新するコマンド
+    // GenericsとKeyPathを使用し、TodoItemのtitleを更新するコマンド
     class UpdateTodoItemProperty<T>: TodoModelCommand {
         let id: TodoItem.ID
         let keyPath: ReferenceWritableKeyPath<TodoItem, T>
